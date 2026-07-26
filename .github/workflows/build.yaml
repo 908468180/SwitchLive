@@ -32,7 +32,8 @@ jobs:
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DPLATFORM_SWITCH=ON
-        cmake --build build -j$(nproc) --verbose 2>&1 | tail -100
+        cmake --build build -j$(nproc) 2>&1
+        cmake --build build --target SwitchLive.nro 2>&1
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
