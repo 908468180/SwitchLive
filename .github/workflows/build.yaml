@@ -24,20 +24,19 @@ jobs:
       run: |
         mkdir -p library
         cd library
-        git clone --depth 1 https://github.com/xfangfang/borealis.git
+        git clone --recursive --depth 1 https://github.com/xfangfang/borealis.git
 
     - name: Build
       run: |
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DPLATFORM_SWITCH=ON \
-          -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake
+          -DPLATFORM_SWITCH=ON
         cmake --build build -j$(nproc)
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: SwitchLive.nro
+        name: SwitchLive
         path: build/SwitchLive.nro
 
   build-desktop:
@@ -48,17 +47,17 @@ jobs:
     - name: Install deps
       run: |
         sudo apt-get update -qq
-        sudo apt-get install -y cmake g++ libcurl4-openssl-dev nlohmann-json3-dev libglfw3-dev libgl-dev git
+        sudo apt-get install -y cmake g++ libcurl4-openssl-dev nlohmann-json3-dev libglfw3-dev libgl-dev libmpv-dev git
 
     - name: Clone borealis
       run: |
         mkdir -p library
         cd library
-        git clone --depth 1 https://github.com/xfangfang/borealis.git
+        git clone --recursive --depth 1 https://github.com/xfangfang/borealis.git
 
     - name: Build
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DPLATFORM_DESKTOP=ON
         cmake --build build -j$(nproc)
 
     - name: Upload artifact
