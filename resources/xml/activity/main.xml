@@ -1,0 +1,34 @@
+<brls:AppletFrame
+    title="SwitchLive">
+
+    <brls:Box
+        width="match_parent"
+        height="match_parent"
+        flexDirection="column"
+        padding="20">
+
+        <brls:Label
+            width="match_parent"
+            height="40"
+            fontSize="24"
+            fontWeight="bold"
+            text="SwitchLive"/>
+
+        <brls:Label
+            id="main/status"
+            width="match_parent"
+            height="30"
+            fontSize="16"
+            marginTop="5"
+            text="Select a platform"/>
+
+        <brls:RecyclingGrid
+            id="main/grid"
+            width="match_parent"
+            height="match_parent"
+            marginTop="15"
+            spanCount="5"/>
+
+    </brls:Box>
+
+</brls:AppletFrame>

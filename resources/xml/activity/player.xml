@@ -1,0 +1,44 @@
+<brls:AppletFrame
+    title="Player">
+
+    <brls:Box
+        width="match_parent"
+        height="match_parent"
+        flexDirection="column"
+        padding="20">
+
+        <brls:Box
+            id="player/video"
+            width="match_parent"
+            height="500"
+            backgroundColor="#000000"
+            cornerRadius="8"/>
+
+        <brls:Label
+            id="player/title"
+            width="match_parent"
+            height="35"
+            fontSize="22"
+            fontWeight="bold"
+            marginTop="12"
+            text="Room Title"/>
+
+        <brls:Label
+            id="player/streamer"
+            width="match_parent"
+            height="28"
+            fontSize="16"
+            marginTop="4"
+            text="Streamer"/>
+
+        <brls:Label
+            id="player/status"
+            width="match_parent"
+            height="25"
+            fontSize="14"
+            marginTop="4"
+            text="Loading..."/>
+
+    </brls:Box>
+
+</brls:AppletFrame>

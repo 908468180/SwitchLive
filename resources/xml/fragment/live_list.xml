@@ -1,0 +1,35 @@
+<brls:AppletFrame
+    title="Live Rooms">
+
+    <brls:Box
+        width="match_parent"
+        height="match_parent"
+        flexDirection="column"
+        padding="20">
+
+        <brls:Label
+            id="live/title"
+            width="match_parent"
+            height="40"
+            fontSize="22"
+            fontWeight="bold"
+            text="Live Rooms"/>
+
+        <brls:Label
+            id="live/status"
+            width="match_parent"
+            height="25"
+            fontSize="14"
+            marginTop="4"
+            text="Loading..."/>
+
+        <brls:RecyclingGrid
+            id="live/grid"
+            width="match_parent"
+            height="match_parent"
+            marginTop="10"
+            spanCount="4"/>
+
+    </brls:Box>
+
+</brls:AppletFrame>

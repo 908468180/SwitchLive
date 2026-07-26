@@ -1,0 +1,7 @@
+build/
+.cmake/
+.cache/
+*.o
+*.d
+*.nro
+*.nacp
