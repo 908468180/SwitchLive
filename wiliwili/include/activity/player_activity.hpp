@@ -1,7 +1,7 @@
 #pragma once
 
 #include <borealis/core/activity.hpp>
-#include <borealis/core/bind.hpp>
+#include <borealis/views/label.hpp>
 #include "api/live_api.hpp"
 
 namespace live {
@@ -22,7 +22,6 @@ private:
     LiveRoomItem room_;
     LiveRoomDetail detail_;
     std::vector<LivePlayQuality> qualities_;
-    int selected_quality_ = 0;
 
     brls::Label* titleLabel = nullptr;
     brls::Label* streamerLabel = nullptr;

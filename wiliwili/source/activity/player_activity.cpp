@@ -9,9 +9,9 @@ PlayerActivity::~PlayerActivity() {
 }
 
 void PlayerActivity::onContentAvailable() {
-    titleLabel     = this->getViewById<brls::Label>("player/title");
-    streamerLabel  = this->getViewById<brls::Label>("player/streamer");
-    statusLabel    = this->getViewById<brls::Label>("player/status");
+    titleLabel     = dynamic_cast<brls::Label*>(this->getView("player/title"));
+    streamerLabel  = dynamic_cast<brls::Label*>(this->getView("player/streamer"));
+    statusLabel    = dynamic_cast<brls::Label*>(this->getView("player/status"));
 
     if (titleLabel)    titleLabel->setText(room_.title);
     if (streamerLabel) streamerLabel->setText(room_.nick);
@@ -70,10 +70,6 @@ void PlayerActivity::startPlayback(const std::string& url) {
     }
 
     brls::Logger::info("Playing: {}", url);
-
-#ifdef __SWITCH__
-    // TODO: Initialize mpv and play
-#endif
 }
 
 } // namespace live

@@ -8,10 +8,10 @@
         padding="20">
 
         <brls:Label
+            id="main/title"
             width="match_parent"
             height="40"
             fontSize="24"
-            fontWeight="bold"
             text="SwitchLive"/>
 
         <brls:Label
@@ -22,12 +22,13 @@
             marginTop="5"
             text="Select a platform"/>
 
-        <brls:RecyclingGrid
-            id="main/grid"
+        <brls:ScrollingFrame
+            id="main/categories"
             width="match_parent"
             height="match_parent"
             marginTop="15"
-            spanCount="5"/>
+            flexDirection="column"
+            padding="10"/>
 
     </brls:Box>
 
