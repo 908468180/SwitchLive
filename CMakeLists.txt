@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 if(DEFINED PLATFORM_SWITCH)
     message(STATUS "Building for Nintendo Switch")
     set(DEVKITPRO $ENV{DEVKITPRO})
-    include(${DEVKITPRO}/switch.cmake)
+    include(${DEVKITPRO}/cmake/Switch.cmake)
 
     target_link_libraries(${PROJECT_NAME} PRIVATE
         switch::libswitch
