@@ -24,7 +24,7 @@ jobs:
       run: |
         mkdir -p library
         cd library
-        git clone --depth 1 https://github.com/nickoala/borealis.git
+        git clone --depth 1 https://github.com/xfangfang/borealis.git
 
     - name: Build
       run: |
@@ -53,7 +53,7 @@ jobs:
       run: |
         mkdir -p library
         cd library
-        git clone --depth 1 https://github.com/nickoala/borealis.git
+        git clone --depth 1 https://github.com/xfangfang/borealis.git
 
     - name: Build
       run: |
