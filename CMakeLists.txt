@@ -23,6 +23,7 @@ FetchContent_Declare(
 )
 set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
 set(CPR_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+set(CURL_DISABLE_UNIX_SOCKETS ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     json
