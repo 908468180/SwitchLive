@@ -21,9 +21,14 @@ FetchContent_Declare(
     GIT_TAG        1.9.9
     GIT_SHALLOW    TRUE
 )
-set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
 set(CPR_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-set(CURL_DISABLE_UNIX_SOCKETS ON CACHE BOOL "" FORCE)
+
+# On Switch, use devkitpro's system curl; on desktop, build from source
+if(PLATFORM_SWITCH)
+    set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE)
+else()
+    set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
+endif()
 
 FetchContent_Declare(
     json
