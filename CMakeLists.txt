@@ -22,13 +22,14 @@ FetchContent_Declare(
     GIT_SHALLOW    TRUE
 )
 set(CPR_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
 
-# On Switch, use devkitpro's system curl; on desktop, build from source
-if(PLATFORM_SWITCH)
-    set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE)
-else()
-    set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
-endif()
+# Disable curl unix sockets at cmake level before cpr fetches curl
+set(CURL_DISABLE_UNIX_SOCKETS ON CACHE BOOL "" FORCE)
+set(CURL_USE_OPENSSL ON CACHE BOOL "" FORCE)
+set(CURL_USE_MBEDTLS ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_LDAPS ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     json
@@ -40,6 +41,25 @@ set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(cpr json)
 
+# Patch curl to disable unix socket error on Switch
+if(PLATFORM_SWITCH)
+    foreach(_curl_dir
+        "${FETCHCONTENT_BASE_DIR}/curl-src"
+        "${FETCHCONTENT_BASE_DIR}/_deps/curl-src"
+        "${CMAKE_BINARY_DIR}/_deps/curl-src")
+        if(EXISTS "${_curl_dir}/lib/socketpair.h")
+            file(READ "${_curl_dir}/lib/socketpair.h" _sp_content)
+            string(REPLACE
+                "#error \"unsupported Unix domain and socketpair build combo\""
+                "/* #error disabled for Switch */"
+                _sp_content "${_sp_content}")
+            file(WRITE "${_curl_dir}/lib/socketpair.h" "${_sp_content}")
+            message(STATUS "Patched curl socketpair.h for Switch")
+            break()
+        endif()
+    endforeach()
+endif()
+
 # Build borealis library
 add_subdirectory(library/borealis/library)
 
@@ -49,10 +69,7 @@ add_definitions(-DFONS_HASH_LUT_SIZE=4096)
 # Project sources
 file(GLOB_RECURSE SWITCHLIVE_SOURCES wiliwili/source/*.cpp)
 
-# On Switch, include the switch wrapper
-if(PLATFORM_SWITCH)
-    list(APPEND SWITCHLIVE_SOURCES ${BOREALIS_LIBRARY}/lib/platforms/switch/switch_wrapper.c)
-endif()
+list(APPEND SWITCHLIVE_SOURCES ${BOREALIS_LIBRARY}/lib/platforms/switch/switch_wrapper.c)
 
 add_executable(${PROJECT_NAME} ${SWITCHLIVE_SOURCES})
 
@@ -67,27 +84,17 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 find_package(Threads REQUIRED)
-list(APPEND EXTRA_LIBS ${CMAKE_THREAD_LIBS_INIT})
-
-if(PLATFORM_DESKTOP)
-    find_package(MPV REQUIRED)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${MPV_INCLUDE_DIR})
-    list(APPEND EXTRA_LIBS ${MPV_LIBRARY})
-endif()
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTRA_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -ffunction-sections -fdata-sections)
 
 # NRO build for Switch
-if(PLATFORM_SWITCH)
-    add_custom_target(${PROJECT_NAME}.nro
-        DEPENDS ${PROJECT_NAME}
-        COMMAND ${NX_NACPTOOL_EXE} --create ${PROJECT_NAME} "SwitchLive" "0.1.0" ${PROJECT_NAME}.nacp
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources
-        COMMAND ${NX_ELF2NRO_EXE} ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro
-            --nacp=${PROJECT_NAME}.nacp
-            --romfsdir=${CMAKE_BINARY_DIR}/resources
-        ALL
-    )
-endif()
+add_custom_target(${PROJECT_NAME}.nro
+    DEPENDS ${PROJECT_NAME}
+    COMMAND ${NX_NACPTOOL_EXE} --create ${PROJECT_NAME} "SwitchLive" "0.1.0" ${PROJECT_NAME}.nacp
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources
+    COMMAND ${NX_ELF2NRO_EXE} ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro
+        --nacp=${PROJECT_NAME}.nacp
+        --romfsdir=${CMAKE_BINARY_DIR}/resources
+    ALL
+)
