@@ -22,14 +22,14 @@ FetchContent_Declare(
     GIT_SHALLOW    TRUE
 )
 set(CPR_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
+set(CPR_ENABLE_SSL ON CACHE BOOL "" FORCE)
 
-# Disable curl unix sockets at cmake level before cpr fetches curl
-set(CURL_DISABLE_UNIX_SOCKETS ON CACHE BOOL "" FORCE)
-set(CURL_USE_OPENSSL OFF CACHE BOOL "" FORCE)
-set(CURL_USE_MBEDTLS ON CACHE BOOL "" FORCE)
-set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
-set(CURL_DISABLE_LDAPS ON CACHE BOOL "" FORCE)
+if (PLATFORM_SWITCH)
+    set(CPR_USE_SYSTEM_CURL ON CACHE BOOL "" FORCE)
+    set(CPR_FORCE_MBEDTLS_BACKEND ON CACHE BOOL "" FORCE)
+else ()
+    set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
+endif ()
 
 FetchContent_Declare(
     json
@@ -40,25 +40,6 @@ FetchContent_Declare(
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(cpr json)
-
-# Patch curl to disable unix socket error on Switch
-if(PLATFORM_SWITCH)
-    foreach(_curl_dir
-        "${FETCHCONTENT_BASE_DIR}/curl-src"
-        "${FETCHCONTENT_BASE_DIR}/_deps/curl-src"
-        "${CMAKE_BINARY_DIR}/_deps/curl-src")
-        if(EXISTS "${_curl_dir}/lib/socketpair.h")
-            file(READ "${_curl_dir}/lib/socketpair.h" _sp_content)
-            string(REPLACE
-                "#error \"unsupported Unix domain and socketpair build combo\""
-                "/* #error disabled for Switch */"
-                _sp_content "${_sp_content}")
-            file(WRITE "${_curl_dir}/lib/socketpair.h" "${_sp_content}")
-            message(STATUS "Patched curl socketpair.h for Switch")
-            break()
-        endif()
-    endforeach()
-endif()
 
 # Build borealis library
 add_subdirectory(library/borealis/library)

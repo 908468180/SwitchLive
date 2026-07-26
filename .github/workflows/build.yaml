@@ -19,6 +19,7 @@ jobs:
       run: |
         apt-get update -qq
         apt-get install -y cmake ninja-build git
+        dkp-pacman -Syy --noconfirm switch-curl switch-mbedtls
 
     - name: Clone borealis
       run: |
@@ -31,7 +32,7 @@ jobs:
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DPLATFORM_SWITCH=ON
-        cmake --build build -j$(nproc)
+        cmake --build build -j$(nproc) --verbose 2>&1 | tail -100
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
