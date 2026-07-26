@@ -1,7 +1,6 @@
 #pragma once
 
-#include <borealis/core/activity.hpp>
-#include <borealis/views/label.hpp>
+#include <borealis.hpp>
 #include "api/live_api.hpp"
 
 namespace live {

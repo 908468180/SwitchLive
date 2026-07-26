@@ -1,7 +1,4 @@
 #include "fragment/live_list.hpp"
-#include "activity/player_activity.hpp"
-#include <borealis/core/application.hpp>
-#include <borealis/core/thread.hpp>
 
 namespace live {
 
@@ -10,7 +7,7 @@ LiveListActivity::~LiveListActivity() {
 }
 
 void LiveListActivity::onContentAvailable() {
-    titleLabel = dynamic_cast<brls::Label*>(this->getView("live/title"));
+    titleLabel  = dynamic_cast<brls::Label*>(this->getView("live/title"));
     statusLabel = dynamic_cast<brls::Label*>(this->getView("live/status"));
 
     if (titleLabel) titleLabel->setText(categoryName_);

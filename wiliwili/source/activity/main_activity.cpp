@@ -1,9 +1,4 @@
 #include "activity/main_activity.hpp"
-#include "fragment/live_list.hpp"
-#include <borealis/core/application.hpp>
-#include <borealis/core/thread.hpp>
-#include <borealis/views/label.hpp>
-#include <borealis/views/box.hpp>
 
 namespace live {
 
@@ -14,7 +9,6 @@ MainActivity::~MainActivity() {
 void MainActivity::onContentAvailable() {
     statusLabel = dynamic_cast<brls::Label*>(this->getView("main/status"));
     titleLabel = dynamic_cast<brls::Label*>(this->getView("main/title"));
-    categoryBox = dynamic_cast<brls::Box*>(this->getView("main/categories"));
 
     if (titleLabel) {
         titleLabel->setText("SwitchLive");

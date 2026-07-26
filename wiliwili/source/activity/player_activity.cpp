@@ -1,6 +1,4 @@
 #include "activity/player_activity.hpp"
-#include <borealis/core/application.hpp>
-#include <borealis/core/thread.hpp>
 
 namespace live {
 
@@ -9,9 +7,9 @@ PlayerActivity::~PlayerActivity() {
 }
 
 void PlayerActivity::onContentAvailable() {
-    titleLabel     = dynamic_cast<brls::Label*>(this->getView("player/title"));
-    streamerLabel  = dynamic_cast<brls::Label*>(this->getView("player/streamer"));
-    statusLabel    = dynamic_cast<brls::Label*>(this->getView("player/status"));
+    titleLabel    = dynamic_cast<brls::Label*>(this->getView("player/title"));
+    streamerLabel = dynamic_cast<brls::Label*>(this->getView("player/streamer"));
+    statusLabel   = dynamic_cast<brls::Label*>(this->getView("player/status"));
 
     if (titleLabel)    titleLabel->setText(room_.title);
     if (streamerLabel) streamerLabel->setText(room_.nick);
@@ -29,7 +27,7 @@ void PlayerActivity::loadPlayUrl() {
 
     if (room_.platform_id == "bilibili") {
         api.getBiliRoomDetail(room_.room_id,
-            [this](const LiveRoomDetail& detail) {
+            [&api, this](const LiveRoomDetail& detail) {
                 detail_ = detail;
                 qualities_ = {
                     {"Original", "original"},
