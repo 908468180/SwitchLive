@@ -30,28 +30,44 @@ jobs:
       run: |
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DPLATFORM_SWITCH=ON 2>&1 | tee cmake_output.txt
+          -DPLATFORM_SWITCH=ON 2>&1 | tee build_log.txt
+        echo "---CMAKE CONFIGURE DONE---" >> build_log.txt
 
     - name: Build
       if: success()
       run: |
-        cmake --build build -j$(nproc) 2>&1 | tee cmake_build.txt
+        cmake --build build -j$(nproc) 2>&1 | tee -a build_log.txt
+        echo "---BUILD DONE---" >> build_log.txt
 
     - name: Package NRO
       if: success()
       run: |
-        cmake --build build --target SwitchLive.nro 2>&1 | tee cmake_nro.txt
-        ls -la build/SwitchLive.elf build/SwitchLive.nro
+        cmake --build build --target SwitchLive.nro 2>&1 | tee -a build_log.txt
+        echo "---NRO DONE---" >> build_log.txt
+        echo "Build dir contents:" >> build_log.txt
+        ls -la build/SwitchLive* 2>&1 | tee -a build_log.txt || true
+        ls -la build/*.nro build/*.elf 2>&1 | tee -a build_log.txt || true
+        ls -la build/*.nacp 2>&1 | tee -a build_log.txt || true
 
-    - name: Upload logs
+    - name: Diagnostics
+      if: always()
+      run: |
+        echo "## Build Log" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        tail -100 build_log.txt >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No log" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Build dir" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        ls -laR build/ 2>/dev/null | head -200 >> $GITHUB_STEP_SUMMARY || echo "No build dir" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload build log
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: build-logs
-        path: |
-          cmake_output.txt
-          cmake_build.txt
-          cmake_nro.txt
+        name: build-log
+        path: build_log.txt
 
     - name: Upload artifact
       if: success()
