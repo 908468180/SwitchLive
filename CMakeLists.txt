@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
     cpr
     GIT_REPOSITORY https://github.com/libcpr/cpr.git
-    GIT_TAG        39847e934081531097e2d7c0b5fc020c42b1de57
+    GIT_TAG        v1.11.0
     GIT_SHALLOW    TRUE
 )
 set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
