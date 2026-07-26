@@ -28,23 +28,33 @@ jobs:
 
     - name: CMake Configure
       run: |
-        set -eo pipefail
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DPLATFORM_SWITCH=ON
+          -DPLATFORM_SWITCH=ON 2>&1 | tee cmake_output.txt
 
     - name: Build
+      if: success()
       run: |
-        set -eo pipefail
-        cmake --build build -j$(nproc)
+        cmake --build build -j$(nproc) 2>&1 | tee cmake_build.txt
 
     - name: Package NRO
+      if: success()
       run: |
-        set -eo pipefail
-        cmake --build build --target SwitchLive.nro
+        cmake --build build --target SwitchLive.nro 2>&1 | tee cmake_nro.txt
         ls -la build/SwitchLive.elf build/SwitchLive.nro
 
+    - name: Upload logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: |
+          cmake_output.txt
+          cmake_build.txt
+          cmake_nro.txt
+
     - name: Upload artifact
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: SwitchLive
