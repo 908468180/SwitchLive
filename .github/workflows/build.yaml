@@ -26,29 +26,24 @@ jobs:
         cd library
         git clone --recursive --depth 1 https://github.com/xfangfang/borealis.git
 
-    - name: CMake Configure
+    - name: Build
       run: |
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DPLATFORM_SWITCH=ON 2>&1 || true
-        cat build/CMakeCache.txt 2>/dev/null | head -50 || echo "No CMakeCache"
+          -DPLATFORM_SWITCH=ON 2>&1 | tee build_output.txt
+        cmake --build build -j$(nproc) 2>&1 | tee -a build_output.txt
+        cmake --build build --target SwitchLive.nro 2>&1 | tee -a build_output.txt
+        ls -la build/SwitchLive.nro build/SwitchLive.elf 2>&1 | tee -a build_output.txt || true
 
-    - name: Build
-      run: |
-        cmake --build build -j$(nproc) 2>&1 || {
-          echo "=== BUILD FAILED ==="
-          exit 1
-        }
-
-    - name: Package NRO
-      run: |
-        cmake --build build --target SwitchLive.nro 2>&1 || {
-          echo "=== NRO PACKAGING FAILED ==="
-          exit 1
-        }
-        ls -la build/SwitchLive.nro build/SwitchLive.elf 2>&1 || echo "Files not found"
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-log
+        path: build_output.txt
 
     - name: Upload artifact
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: SwitchLive
