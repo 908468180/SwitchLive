@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# Fetch dependencies
 FetchContent_Declare(
     cpr
     GIT_REPOSITORY https://github.com/libcpr/cpr.git
@@ -26,7 +25,6 @@ set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(cpr json)
 
-# Source files
 file(GLOB_RECURSE SWITCHLIVE_SOURCES wiliwili/source/*.cpp)
 file(GLOB_RECURSE SWITCHLIVE_HEADERS wiliwili/include/*.hpp)
 
@@ -45,17 +43,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     nlohmann_json::nlohmann_json
 )
 
-# Nintendo Switch
 if(DEFINED PLATFORM_SWITCH)
     message(STATUS "Building for Nintendo Switch")
-    set(DEVKITPRO $ENV{DEVKITPRO})
-    include(${DEVKITPRO}/cmake/Switch.cmake)
-
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        switch::libswitch
-        switch::mm
-        switch::websockets
-    )
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         __SWITCH__
@@ -64,7 +53,6 @@ if(DEFINED PLATFORM_SWITCH)
         BOREALIS_USE_OPENGL
     )
 else()
-    # Desktop
     find_package(Threads REQUIRED)
     find_package(OpenGL REQUIRED)
     find_package(glfw3 REQUIRED)
