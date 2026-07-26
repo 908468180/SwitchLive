@@ -30,6 +30,7 @@ jobs:
       run: |
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
+          -DPLATFORM_SWITCH=ON \
           -DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/Switch.cmake
         cmake --build build -j$(nproc)
 

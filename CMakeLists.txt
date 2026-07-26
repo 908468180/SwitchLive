@@ -15,7 +15,6 @@ FetchContent_Declare(
 )
 set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
 set(CPR_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-set(CPR_ENABLE_CPP OPTIONS OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     json
@@ -38,6 +37,7 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/wiliwili/include
+    ${CMAKE_SOURCE_DIR}/library/borealis/include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
