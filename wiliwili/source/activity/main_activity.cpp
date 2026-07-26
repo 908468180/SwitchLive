@@ -7,43 +7,28 @@ MainActivity::~MainActivity() {
 }
 
 void MainActivity::onContentAvailable() {
-    statusLabel = dynamic_cast<brls::Label*>(this->getView("main/status"));
-    titleLabel = dynamic_cast<brls::Label*>(this->getView("main/title"));
+    titleLabel->setText("SwitchLive");
+    statusLabel->setText("Loading categories...");
 
-    if (titleLabel) {
-        titleLabel->setText("SwitchLive");
-    }
-
-    if (statusLabel) {
-        statusLabel->setText("Loading categories...");
-    }
-
-    loadCategories(current_platform_);
+    loadCategories(currentPlatform);
 }
 
 void MainActivity::loadCategories(const std::string& platform) {
-    current_platform_ = platform;
-
-    if (statusLabel) {
-        statusLabel->setText("Loading " + platform + " categories...");
-    }
+    currentPlatform = platform;
+    statusLabel->setText("Loading " + platform + " categories...");
 
     auto& api = LiveAPI::getInstance();
 
     auto onSuccess = [this](const std::vector<LiveCategory>& categories) {
         brls::Threading::sync([this, categories]() {
-            if (statusLabel) {
-                statusLabel->setText(std::to_string(categories.size()) + " categories loaded");
-            }
+            statusLabel->setText(std::to_string(categories.size()) + " categories loaded");
             brls::Logger::info("Loaded {} categories", categories.size());
         });
     };
 
     auto onError = [this](const std::string& error, int code) {
         brls::Threading::sync([this, error]() {
-            if (statusLabel) {
-                statusLabel->setText("Error: " + error);
-            }
+            statusLabel->setText("Error: " + error);
         });
     };
 

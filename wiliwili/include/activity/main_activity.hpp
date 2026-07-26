@@ -1,6 +1,8 @@
 #pragma once
 
 #include <borealis.hpp>
+#include <borealis/core/bind.hpp>
+
 #include "api/live_api.hpp"
 
 namespace live {
@@ -15,10 +17,10 @@ public:
 private:
     void loadCategories(const std::string& platform);
 
-    brls::Label* statusLabel = nullptr;
-    brls::Label* titleLabel = nullptr;
+    BRLS_BIND(brls::Label, statusLabel, "main/status");
+    BRLS_BIND(brls::Label, titleLabel, "main/title");
 
-    std::string current_platform_ = "bilibili";
+    std::string currentPlatform = "bilibili";
 };
 
 } // namespace live

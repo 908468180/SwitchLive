@@ -1,6 +1,8 @@
 #pragma once
 
 #include <borealis.hpp>
+#include <borealis/core/bind.hpp>
+
 #include "api/live_api.hpp"
 
 namespace live {
@@ -18,13 +20,13 @@ private:
     void loadPlayUrl();
     void startPlayback(const std::string& url);
 
-    LiveRoomItem room_;
-    LiveRoomDetail detail_;
-    std::vector<LivePlayQuality> qualities_;
+    LiveRoomItem room;
+    LiveRoomDetail detail;
+    std::vector<LivePlayQuality> qualities;
 
-    brls::Label* titleLabel = nullptr;
-    brls::Label* streamerLabel = nullptr;
-    brls::Label* statusLabel = nullptr;
+    BRLS_BIND(brls::Label, titleLabel, "player/title");
+    BRLS_BIND(brls::Label, streamerLabel, "player/streamer");
+    BRLS_BIND(brls::Label, statusLabel, "player/status");
 };
 
 } // namespace live

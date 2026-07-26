@@ -1,6 +1,8 @@
 #pragma once
 
 #include <borealis.hpp>
+#include <borealis/core/bind.hpp>
+
 #include "api/live_api.hpp"
 
 namespace live {
@@ -18,12 +20,12 @@ public:
 private:
     void loadRooms();
 
-    brls::Label* titleLabel = nullptr;
-    brls::Label* statusLabel = nullptr;
+    BRLS_BIND(brls::Label, titleLabel, "live/title");
+    BRLS_BIND(brls::Label, statusLabel, "live/status");
 
-    std::string platform_;
-    std::string categoryId_;
-    std::string categoryName_;
+    std::string platform;
+    std::string categoryId;
+    std::string categoryName;
 };
 
 } // namespace live

@@ -1,8 +1,11 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <functional>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
 
 namespace live {
@@ -13,34 +16,34 @@ struct LiveCategory {
 };
 
 struct LiveRoomItem {
-    std::string room_id;
+    std::string roomId;
     std::string title;
-    std::string cover_url;
-    std::string avatar_url;
+    std::string coverUrl;
+    std::string avatarUrl;
     std::string nick;
     int online = 0;
-    std::string platform_id;
+    std::string platformId;
 };
 
 struct LivePlayQuality {
     std::string quality;
-    std::string quality_type;
+    std::string qualityType;
 };
 
 struct LivePlayUrl {
     std::string url;
-    std::string backup_url;
+    std::string backupUrl;
 };
 
 struct LiveRoomDetail {
-    std::string room_id;
+    std::string roomId;
     std::string title;
-    std::string cover_url;
-    std::string avatar_url;
+    std::string coverUrl;
+    std::string avatarUrl;
     std::string nick;
-    int live_status = 0;
+    int liveStatus = 0;
     int online = 0;
-    std::string platform_id;
+    std::string platformId;
 };
 
 struct LiveCategoryResult {
@@ -60,28 +63,27 @@ public:
     static LiveAPI& getInstance();
 
     void init();
-    void setCookie(const std::string& cookie) { cookie_ = cookie; }
 
     // Bilibili Live API
     void getBiliCategories(std::function<void(const std::vector<LiveCategory>&)> callback,
                            ErrorCallback error = nullptr);
-    
+
     void getBiliRoomList(const std::string& categoryId, int page,
                          std::function<void(const LiveCategoryResult&)> callback,
                          ErrorCallback error = nullptr);
-    
+
     void getBiliRecommendRooms(int page,
                                std::function<void(const LiveCategoryResult&)> callback,
                                ErrorCallback error = nullptr);
-    
+
     void getBiliRoomDetail(const std::string& roomId,
                            std::function<void(const LiveRoomDetail&)> callback,
                            ErrorCallback error = nullptr);
-    
+
     void getBiliPlayUrl(const std::string& roomId, const std::string& quality,
                         std::function<void(const LivePlayUrl&)> callback,
                         ErrorCallback error = nullptr);
-    
+
     void searchBiliRooms(const std::string& keyword, int page,
                          std::function<void(const LiveSearchResult&)> callback,
                          ErrorCallback error = nullptr);
@@ -89,7 +91,7 @@ public:
     // Douyu Live API
     void getDouyuCategories(std::function<void(const std::vector<LiveCategory>&)> callback,
                             ErrorCallback error = nullptr);
-    
+
     void getDouyuRoomList(const std::string& categoryId, int page,
                           std::function<void(const LiveCategoryResult&)> callback,
                           ErrorCallback error = nullptr);
@@ -97,7 +99,7 @@ public:
     // Huya Live API
     void getHuyaCategories(std::function<void(const std::vector<LiveCategory>&)> callback,
                            ErrorCallback error = nullptr);
-    
+
     void getHuyaRoomList(const std::string& categoryId, int page,
                          std::function<void(const LiveCategoryResult&)> callback,
                          ErrorCallback error = nullptr);
@@ -105,13 +107,18 @@ public:
     // Douyin Live API
     void getDouyinCategories(std::function<void(const std::vector<LiveCategory>&)> callback,
                              ErrorCallback error = nullptr);
-    
+
     void getDouyinRoomList(const std::string& categoryId, int page,
                            std::function<void(const LiveCategoryResult&)> callback,
                            ErrorCallback error = nullptr);
 
 private:
     LiveAPI() = default;
+
+    cpr::Header defaultHeaders() const {
+        return {{"User-Agent", "Mozilla/5.0"}, {"Cookie", cookie_}};
+    }
+
     std::string cookie_;
 };
 
