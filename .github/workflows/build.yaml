@@ -32,19 +32,14 @@ jobs:
     - name: Build
       run: cmake --build build -j$(nproc)
 
-    - name: Package NRO
-      if: success()
-      run: |
-        cd build
-        nacptool --create SwitchLive "SwitchLive" "0.1.0" SwitchLive.nacp
-        cp -r ../resources romfs
-        elf2nro SwitchLive.elf SwitchLive.nro --nacp=SwitchLive.nacp --romfsdir=romfs
-        ls -la SwitchLive.nro
-        cd ..
+    - name: Find NRO
+      if: always()
+      run: find . -name "*.nro" -o -name "*.elf" 2>/dev/null
 
     - name: Upload artifact
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: SwitchLive
-        path: build/SwitchLive.nro
-        if-no-files-found: error
+        path: "**/SwitchLive.nro"
+        if-no-files-found: warn

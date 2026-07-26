@@ -69,4 +69,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -ffunction-sections -fdata-sections)
 
-# NRO target - handled by CI workflow directly
+# NRO build for Switch
+if (PLATFORM_SWITCH)
+    add_custom_target(${PROJECT_NAME}.nro
+        DEPENDS ${PROJECT_NAME}
+        COMMAND ${NX_NACPTOOL_EXE} --create ${PROJECT_NAME} "SwitchLive" "0.1.0" ${PROJECT_NAME}.nacp
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/romfs
+        COMMAND ${NX_ELF2NRO_EXE} ${PROJECT_NAME}.elf ${PROJECT_NAME}.nro
+            --nacp=${PROJECT_NAME}.nacp
+            --romfsdir=${CMAKE_BINARY_DIR}/romfs
+        ALL
+    )
+endif()
