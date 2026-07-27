@@ -18,8 +18,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        submodules: recursive
+
+    - name: Clone borealis
+      run: |
+        mkdir -p library
+        cd library
+        git clone --recursive --depth 1 https://github.com/xfangfang/borealis.git
 
     - name: Pull Docker image
       run: |
