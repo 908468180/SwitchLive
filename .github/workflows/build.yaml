@@ -9,61 +9,25 @@ on:
 jobs:
   build-switch:
     runs-on: ubuntu-latest
-    container: devkitpro/devkita64:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { driver: opengl }
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-
-    - name: Install deps
-      run: |
-        apt-get update -qq
-        apt-get install -y cmake ninja-build git
-        dkp-pacman -Sy --noconfirm switch-curl switch-mbedtls
-
-    - name: Clone borealis
-      run: |
-        mkdir -p library
-        cd library
-        git clone --recursive --depth 1 https://github.com/xfangfang/borealis.git
-
-    - name: CMake Configure
-      run: |
-        cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLATFORM_SWITCH=ON > /tmp/step_output.txt 2>&1
-        echo "EXIT: $?" >> /tmp/step_output.txt
-
-    - name: Build
-      run: |
-        cmake --build build -j$(nproc) > /tmp/build_output.txt 2>&1
-        echo "EXIT: $?" >> /tmp/build_output.txt
-
-    - name: Combine and save
-      if: always()
-      run: |
-        echo "=== CMAKE CONFIGURE ===" > /tmp/full_output.txt
-        cat /tmp/step_output.txt >> /tmp/full_output.txt
-        echo "" >> /tmp/full_output.txt
-        echo "=== BUILD ===" >> /tmp/full_output.txt
-        cat /tmp/build_output.txt >> /tmp/full_output.txt
-        echo "" >> /tmp/full_output.txt
-        echo "=== FIND FILES ===" >> /tmp/full_output.txt
-        find build -maxdepth 2 \( -name "*.nro" -o -name "*.elf" -o -name "*.nacp" \) -ls >> /tmp/full_output.txt 2>&1 || true
-        echo "" >> /tmp/full_output.txt
-        echo "=== BUILD DIR ===" >> /tmp/full_output.txt
-        ls -la build/ >> /tmp/full_output.txt 2>&1 || true
-        cat /tmp/full_output.txt
-
-    - name: Upload full log
-      if: always()
-      uses: actions/upload-artifact@v4
       with:
-        name: full-build-log
-        path: /tmp/full_output.txt
+        submodules: recursive
+
+    - name: Build Nro
+      run: |
+        docker run --rm -v $(pwd):/data devkitpro/devkita64:20251117 bash -c "/data/scripts/build_switch.sh"
 
     - name: Upload artifact
-      if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: SwitchLive
-        path: build/*.nro
+        name: SwitchLive-${{ matrix.driver }}
+        path: "cmake-build-switch/*.nro"
         if-no-files-found: warn
