@@ -19,6 +19,7 @@ jobs:
       run: |
         apt-get update -qq
         apt-get install -y cmake ninja-build git
+        dkp-pacman -Sy --noconfirm switch-curl switch-mbedtls
 
     - name: Clone borealis
       run: |
