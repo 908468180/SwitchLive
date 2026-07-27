@@ -21,9 +21,17 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Pull Docker image
+      run: |
+        for i in 1 2 3; do
+          docker pull devkitpro/devkita64:latest && break
+          echo "Retry $i failed, waiting..."
+          sleep 10
+        done
+
     - name: Build Nro
       run: |
-        docker run --rm -v $(pwd):/data devkitpro/devkita64:20251117 bash /data/scripts/build_switch.sh
+        docker run --rm -v $(pwd):/data devkitpro/devkita64:latest bash /data/scripts/build_switch.sh
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
